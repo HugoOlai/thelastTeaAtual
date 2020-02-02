@@ -231,7 +231,7 @@ public class character : MonoBehaviour
         {
             GameObject clone;
             clone = Instantiate(nuvem, transform.position, transform.rotation);
-            Destroy(itemPerna, 1f);
+            Destroy(itemPerna);
         }
 
         if (img.fillAmount == 0)
