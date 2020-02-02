@@ -111,7 +111,7 @@ public class character : MonoBehaviour
             //        anim.SetBool("MoveBaixo", false);
             //    }
 
-            if (cabeca == true && perna == false)
+            if (cabeca == true)
             {
                 if (Input.GetKey(KeyCode.LeftArrow) && cabeca == true)
                 {
@@ -153,7 +153,11 @@ public class character : MonoBehaviour
 
             if (perna)
             {
-                if (Input.GetKey(KeyCode.LeftArrow) && perna == true)
+                anim.SetBool("rodaAnda", false);
+                anim.SetBool("rodaParada", true);
+                anim.SetBool("rodaPula", false);
+
+                if (Input.GetKey(KeyCode.LeftArrow))
                 {
                     Debug.Log("oioi");
                     anim.SetBool("rodaAnda", false);
