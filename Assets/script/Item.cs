@@ -29,7 +29,7 @@ public class Item : dropItem
             if (isjumping)
             {
                 rd2d.AddForce(Vector2.up * jumpheight);
-                rd2d.AddForce(Vector2.right * -jumpheight);
+                rd2d.AddForce(Vector2.right * jumpheight);
                 isjumping = false;
         }
         else

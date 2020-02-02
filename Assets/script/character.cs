@@ -18,6 +18,8 @@ public class character : MonoBehaviour
 
     public GameObject nuvem;
     public GameObject itemPerna;
+    public bool cabeca = true;
+    public bool perna = false;
 
     //private bool isjumping = false;
     private Rigidbody2D rd2d;
@@ -39,6 +41,9 @@ public class character : MonoBehaviour
         viraH = GetComponent<Transform>();
         vivo = true;
         SuperVel = false;
+        cabeca = true;
+        perna = false;
+
         //SomAndar.Stop();
         //SomCorrer.Stop();
 
@@ -106,62 +111,110 @@ public class character : MonoBehaviour
             //        anim.SetBool("MoveBaixo", false);
             //    }
 
-            if (Input.GetKey(KeyCode.LeftArrow))
+            if (cabeca == true && perna == false)
             {
-                //anim.SetBool("paradoCima", false);
-                //anim.SetBool("HParado", false);
-                //anim.SetBool("MoveEsquerda", true);
-                //anim.SetBool("ladoParado", false);
-                //anim.SetBool("MoveCima", false);
-                //anim.SetBool("MoveBaixo", false);
-                transform.Translate(new Vector2(-vel * Time.deltaTime, 0));
+                if (Input.GetKey(KeyCode.LeftArrow) && cabeca == true)
+                {
+                    anim.SetBool("rodaAnda", true);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", false);
+                    //anim.SetBool("ladoParado", false);
+                    //anim.SetBool("MoveCima", false);
+                    //anim.SetBool("MoveBaixo", false);
+                    transform.Translate(new Vector2(-vel * Time.deltaTime, 0));
 
+
+                }
+                else if (Input.GetKey(KeyCode.RightArrow) && cabeca == true)
+                {
+                    anim.SetBool("rodaAnda", true);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", false);
+                    transform.Translate(new Vector2(vel * Time.deltaTime, 0));
+
+                }
+                else if (Input.GetKey(KeyCode.UpArrow) && cabeca == true)
+                {
+                    VerifyPlayerJump();
+                    anim.SetBool("rodaAnda", false);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", true);
+
+                }
+                else if (cabeca == true)
+                {
+                    anim.SetBool("rodaAnda", false);
+                    anim.SetBool("rodaParada", true);
+                    anim.SetBool("rodaPula", false);
+
+                }
 
             }
-            else if (Input.GetKey(KeyCode.RightArrow))
+
+            if (perna)
             {
-                //anim.SetBool("paradoCima", false);
-                //anim.SetBool("HParado", false);
-                //anim.SetBool("MoveEsquerda", true);
-                //anim.SetBool("ladoParado", false);
-                //anim.SetBool("MoveCima", false);
-                //anim.SetBool("MoveBaixo", false);
-                transform.Translate(new Vector2(vel * Time.deltaTime, 0));
+                if (Input.GetKey(KeyCode.LeftArrow) && perna == true)
+                {
+                    Debug.Log("oioi");
+                    anim.SetBool("rodaAnda", false);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", false);
+                    anim.SetBool("pernaAndando", true);
+                    anim.SetBool("pernaParado", false);
+                    anim.SetBool("pernaPulo", false);
+                    //anim.SetBool("ladoParado", false);
+                    //anim.SetBool("MoveCima", false);
+                    //anim.SetBool("MoveBaixo", false);
+                    transform.Translate(new Vector2(-vel * Time.deltaTime, 0));
+
+
+                }
+                else if (Input.GetKey(KeyCode.RightArrow) && perna == true)
+                {
+                    anim.SetBool("rodaAnda", false);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", false);
+
+                    anim.SetBool("pernaAndando", true);
+                    anim.SetBool("pernaParado", false);
+                    anim.SetBool("pernaPulo", false);
+
+                    transform.Translate(new Vector2(vel * Time.deltaTime, 0));
+
+                }
+                else if (Input.GetKey(KeyCode.UpArrow) && perna == true)
+                {
+                    VerifyPlayerJump();
+                    anim.SetBool("rodaAnda", false);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", false);
+
+                    anim.SetBool("pernaAndando", false);
+                    anim.SetBool("pernaParado", false);
+                    anim.SetBool("pernaPulo", true);
+
+                }
+                else if (perna == true)
+                {
+                    anim.SetBool("rodaAnda", false);
+                    anim.SetBool("rodaParada", false);
+                    anim.SetBool("rodaPula", false);
+
+                    anim.SetBool("pernaAndando", false);
+                    anim.SetBool("pernaParado", true);
+                    anim.SetBool("pernaPulo", false);
+
+                }
+
+                this.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             }
-            //else if (Input.GetKey(KeyCode.DownArrow))
-            //{
-            //    //anim.SetBool("paradoCima", false);
-            //    //anim.SetBool("HParado", false);
-            //    //anim.SetBool("MoveEsquerda", false);
-            //    //anim.SetBool("ladoParado", false);
-            //    //anim.SetBool("MoveCima", false);
-            //    //anim.SetBool("MoveBaixo", true);
-            //    p = 2;
-            //    //transform.Translate(new Vector2(0, -vel * Time.deltaTime));
-
-            //}
-
-
-            if (Input.GetKey(KeyCode.UpArrow))
-            {
-                VerifyPlayerJump();
-
-
-
-                //anim.SetBool("paradoCima", false);
-                //anim.SetBool("HParado", false);
-                //anim.SetBool("MoveEsquerda", false);
-                //anim.SetBool("ladoParado", false);
-                //anim.SetBool("MoveCima", true);
-                //anim.SetBool("MoveBaixo", false);
-            }
-
-
-
-            this.transform.localRotation = Quaternion.Euler(0, 0, 0);
-
         }
+
+            
+//========================================================================
+
+           
 
 
 
@@ -259,7 +312,10 @@ public class character : MonoBehaviour
         {
             GameObject clone;
             clone = Instantiate(nuvem, transform.position, transform.rotation);
+            perna = true;
+            cabeca = false;
             Destroy(itemPerna);
+            Destroy(clone, 3f);
 
         }
         if (other.gameObject.CompareTag("OBJ"))
