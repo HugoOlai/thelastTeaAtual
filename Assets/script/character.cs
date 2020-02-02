@@ -15,17 +15,17 @@ public class character : MonoBehaviour
     public Image img;
     public GameObject entrada;
     public bool SuperVel;
-    public int p;
-    public float jumpheight;
-    public int DoubleJumpForce = 2;
-    public int JumpingKey = 0;
 
     public GameObject nuvem;
     public GameObject itemPerna;
 
-    private bool isjumping = false;
+    //private bool isjumping = false;
     private Rigidbody2D rd2d;
-    private bool grounded;
+    private bool grounded = true;
+    public int JumpCount = 0;
+    public float jumpForce = 360f;
+    private Rigidbody2D rigid;
+    private bool candoublejump;
 
     //public AudioSource SomAndar;
     //public AudioSource SomCorrer;
@@ -34,6 +34,7 @@ public class character : MonoBehaviour
     void Start()
     {
         rd2d = GetComponent<Rigidbody2D>();
+        rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         viraH = GetComponent<Transform>();
         vivo = true;
@@ -114,7 +115,7 @@ public class character : MonoBehaviour
                 //anim.SetBool("MoveCima", false);
                 //anim.SetBool("MoveBaixo", false);
                 transform.Translate(new Vector2(-vel * Time.deltaTime, 0));
-                p = 4;
+
 
             }
             else if (Input.GetKey(KeyCode.RightArrow))
@@ -126,25 +127,28 @@ public class character : MonoBehaviour
                 //anim.SetBool("MoveCima", false);
                 //anim.SetBool("MoveBaixo", false);
                 transform.Translate(new Vector2(vel * Time.deltaTime, 0));
-                p = 3;
 
             }
-            else if (Input.GetKey(KeyCode.DownArrow))
-            {
-                //anim.SetBool("paradoCima", false);
-                //anim.SetBool("HParado", false);
-                //anim.SetBool("MoveEsquerda", false);
-                //anim.SetBool("ladoParado", false);
-                //anim.SetBool("MoveCima", false);
-                //anim.SetBool("MoveBaixo", true);
-                p = 2;
-                //transform.Translate(new Vector2(0, -vel * Time.deltaTime));
+            //else if (Input.GetKey(KeyCode.DownArrow))
+            //{
+            //    //anim.SetBool("paradoCima", false);
+            //    //anim.SetBool("HParado", false);
+            //    //anim.SetBool("MoveEsquerda", false);
+            //    //anim.SetBool("ladoParado", false);
+            //    //anim.SetBool("MoveCima", false);
+            //    //anim.SetBool("MoveBaixo", true);
+            //    p = 2;
+            //    //transform.Translate(new Vector2(0, -vel * Time.deltaTime));
 
-            }
+            //}
+
 
             if (Input.GetKey(KeyCode.UpArrow))
             {
                 VerifyPlayerJump();
+
+
+
                 //anim.SetBool("paradoCima", false);
                 //anim.SetBool("HParado", false);
                 //anim.SetBool("MoveEsquerda", false);
@@ -152,6 +156,7 @@ public class character : MonoBehaviour
                 //anim.SetBool("MoveCima", true);
                 //anim.SetBool("MoveBaixo", false);
             }
+
 
 
             this.transform.localRotation = Quaternion.Euler(0, 0, 0);
@@ -175,28 +180,60 @@ public class character : MonoBehaviour
 
     private void VerifyPlayerJump()
     {
-        if (JumpingKey == 0)
-        {
-            p = 1;
-            JumpingKey++;
-            grounded = false;
-            rd2d.AddForce(Vector2.up * jumpheight);
-            isjumping = true;
-            VerifyPlayerJump();
-           // Debug.Log("to pulando");
-        }
 
-        if (JumpingKey >= 1 && JumpingKey < 3)
+        if (Input.GetKey(KeyCode.UpArrow) && grounded == true && JumpCount == 0)
         {
-            rd2d.AddForce(Vector2.up * jumpheight * DoubleJumpForce);
-            grounded = false;
-            isjumping = true;
-            //Debug.Log("double jumping");
-            JumpingKey--;
+            Debug.Log("pulo");
+            rigid.AddForce(new Vector2(0, jumpForce));
+            candoublejump = true;
         }
-        else
-            grounded = true;
-        
+        //else
+        //    JumpCount = 0;
+
+        //if (candoublejump == true && Input.GetKey(KeyCode.UpArrow) && JumpCount <= 1)
+        //{
+        //    Debug.Log("duplo pulo");
+        //    rigid.AddForce(new Vector2(0, jumpForce));
+        //    candoublejump = false;
+        //    JumpCount++;
+
+
+        //}
+
+
+        //if (verifyJumpValue == 0 && Input.GetKey(KeyCode.UpArrow))
+        //{
+
+        //        grounded = false;
+        //        rd2d.AddForce(Vector2.up * jumpheight);
+        //        verifyJumpValue = verifyJumpValue + 1;
+        //        isjumping = true;
+        //        VerifyPlayerJump();
+        //        Debug.Log("pulo");
+        //        // Debug.Log("to pulando");
+
+
+        //    if (verifyJumpValue == 1 && Input.GetKey(KeyCode.UpArrow))
+        //    {
+
+        //            verifyJumpValue = verifyJumpValue + 1;
+        //            rd2d.AddForce((Vector2.up * jumpheightDouble));
+        //            grounded = false;
+        //            isjumping = true;
+        //            //Debug.Log("double jumping");
+        //            Debug.Log("duplo pulo");
+
+        //    }
+        //}
+        //else
+        //    //verifyJumpValue = 0;
+        //    grounded = true;
+
+    }
+
+    void OnCollisionEnter2D(Collision2D collide)
+    {
+
     }
 
     void flip()
@@ -207,15 +244,6 @@ public class character : MonoBehaviour
         viraH.localScale = scala;
     }
 
-    public void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.CompareTag("OBJ"))
-        {
-            isjumping = false;
-            //Debug.Log(isjumping);
-        }
-
-    }
 
     public void OnCollisionExit2D(Collision2D other)
     {
@@ -232,6 +260,13 @@ public class character : MonoBehaviour
             GameObject clone;
             clone = Instantiate(nuvem, transform.position, transform.rotation);
             Destroy(itemPerna);
+
+        }
+        if (other.gameObject.CompareTag("OBJ"))
+        {
+            JumpCount = 0;
+            grounded = false;
+
         }
 
         if (img.fillAmount == 0)
@@ -242,15 +277,15 @@ public class character : MonoBehaviour
 
     }
 
-   
+
 }
 
 
 
 
-        
 
-        
+
+
 
 
 
