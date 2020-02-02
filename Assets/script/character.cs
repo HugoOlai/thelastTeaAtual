@@ -18,6 +18,8 @@ public class character : MonoBehaviour
 
     public GameObject nuvem;
     public GameObject itemPerna;
+    public Rigidbody2D pedra;
+
     public bool cabeca = true;
     public bool perna = false;
 
@@ -326,7 +328,11 @@ public class character : MonoBehaviour
         {
             JumpCount = 0;
             grounded = false;
+        }
 
+        if (other.gameObject.CompareTag("pedra"))
+        {
+            pedra.AddForce(Vector2.right * 200);
         }
 
         if (img.fillAmount == 0)
