@@ -25,7 +25,7 @@ public class character : MonoBehaviour
     private Rigidbody2D rd2d;
     private bool grounded = true;
     public int JumpCount = 0;
-    public float jumpForce = 360f;
+    public float jumpForce = 12f;
     private Rigidbody2D rigid;
     private bool candoublejump;
 
@@ -215,10 +215,10 @@ public class character : MonoBehaviour
             }
         }
 
-            
-//========================================================================
 
-           
+        //========================================================================
+
+
 
 
 
@@ -244,100 +244,58 @@ public class character : MonoBehaviour
             rigid.AddForce(new Vector2(0, jumpForce));
             candoublejump = true;
         }
-        //else
-        //    JumpCount = 0;
 
-        //if (candoublejump == true && Input.GetKey(KeyCode.UpArrow) && JumpCount <= 1)
-        //{
-        //    Debug.Log("duplo pulo");
-        //    rigid.AddForce(new Vector2(0, jumpForce));
-        //    candoublejump = false;
-        //    JumpCount++;
-
-
-        //}
-
-
-        //if (verifyJumpValue == 0 && Input.GetKey(KeyCode.UpArrow))
-        //{
-
-        //        grounded = false;
-        //        rd2d.AddForce(Vector2.up * jumpheight);
-        //        verifyJumpValue = verifyJumpValue + 1;
-        //        isjumping = true;
-        //        VerifyPlayerJump();
-        //        Debug.Log("pulo");
-        //        // Debug.Log("to pulando");
-
-
-        //    if (verifyJumpValue == 1 && Input.GetKey(KeyCode.UpArrow))
-        //    {
-
-        //            verifyJumpValue = verifyJumpValue + 1;
-        //            rd2d.AddForce((Vector2.up * jumpheightDouble));
-        //            grounded = false;
-        //            isjumping = true;
-        //            //Debug.Log("double jumping");
-        //            Debug.Log("duplo pulo");
-
-        //    }
-        //}
-        //else
-        //    //verifyJumpValue = 0;
-        //    grounded = true;
-
-    }
-
-    void OnCollisionEnter2D(Collision2D collide)
-    {
-
-    }
-
-    void flip()
-    {
-        face = !face;
-        Vector3 scala = viraH.localScale;
-        scala.x *= -1;
-        viraH.localScale = scala;
-    }
-
-
-    public void OnCollisionExit2D(Collision2D other)
-    {
-        //if (other.gameObject.CompareTag("OBJ"))
-        //{
-        //    vel = 3f;
-        //}
-    }
-
-    public void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("item"))
+        void OnCollisionEnter2D(Collision2D collide)
         {
-            GameObject clone;
-            clone = Instantiate(nuvem, transform.position, transform.rotation);
-            perna = true;
-            cabeca = false;
-            Destroy(itemPerna);
-            Destroy(clone, 3f);
-
-        }
-        if (other.gameObject.CompareTag("OBJ"))
-        {
-            JumpCount = 0;
-            grounded = false;
 
         }
 
-        if (img.fillAmount == 0)
+        void flip()
         {
-            vivo = false;
+            face = !face;
+            Vector3 scala = viraH.localScale;
+            scala.x *= -1;
+            viraH.localScale = scala;
+        }
+
+
+         void OnCollisionExit2D(Collision2D other)
+        {
+            //if (other.gameObject.CompareTag("OBJ"))
+            //{
+            //    vel = 3f;
+            //}
+        }
+
+         void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.gameObject.CompareTag("item"))
+            {
+                GameObject clone;
+                clone = Instantiate(nuvem, transform.position, transform.rotation);
+                perna = true;
+                cabeca = false;
+                Destroy(itemPerna);
+                Destroy(clone, 3f);
+
+            }
+            if (other.gameObject.CompareTag("OBJ"))
+            {
+                JumpCount = 0;
+                grounded = false;
+
+            }
+
+            if (img.fillAmount == 0)
+            {
+                vivo = false;
+            }
+
+
         }
 
 
     }
-
-
 }
 
 
