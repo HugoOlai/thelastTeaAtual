@@ -11,10 +11,6 @@ public class dropItem : MonoBehaviour
     void Start()
     {
         bc = gameObject.AddComponent<BoxCollider2D>() as BoxCollider2D;
-        
-        //bcP = false;
-
-       // rd = gameObject.AddComponent<Rigidbody2D>() as Rigidbody2D;
     }
 
     // Update is called once per frame
@@ -25,13 +21,9 @@ public class dropItem : MonoBehaviour
 
     public void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("heroi"))
+        if (collision.gameObject.CompareTag("Destroco"))
         {
-            //bc.isTrigger = true;
             bcP = true;
-            Debug.Log("estou colidindo com o heroi");
-            Debug.Log("bpc: " + bcP);
-            //Destroy(gameObject, 0.10f);
         }        
     }
 }

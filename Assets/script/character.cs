@@ -16,20 +16,33 @@ public class character : MonoBehaviour
     public GameObject entrada;
     public bool SuperVel;
 
+    public float jumpForce;
+    
     public GameObject nuvem;
+    public GameObject chaoDePulo;
     public GameObject itemPerna;
+    private GameObject clone;
+    private GameObject clonechao;
     public Rigidbody2D pedra;
 
     public bool cabeca = true;
     public bool perna = false;
+    public bool itensFoiDestruido = false;
+
+    private bool isGrounded;
+    public Transform feetPos;
+    public float checkRadius;
+    public LayerMask whatIsGround;
+    private float jumpTimeCounter;
+    public float JumpTime;
+    private bool isJumping;
 
     //private bool isjumping = false;
     private Rigidbody2D rd2d;
-    private bool grounded = true;
-    public int JumpCount = 0;
-    public float jumpForce = 12f;
+    private bool ColidindoComChao = false;
     private Rigidbody2D rigid;
     private bool candoublejump;
+    private int pulos = 0;
 
     //public AudioSource SomAndar;
     //public AudioSource SomCorrer;
@@ -41,6 +54,7 @@ public class character : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         viraH = GetComponent<Transform>();
+
         vivo = true;
         SuperVel = false;
         cabeca = true;
@@ -55,7 +69,7 @@ public class character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        isGrounded = Physics2D.OverlapCircle(feetPos.position, checkRadius, whatIsGround);
         if (vivo == true)
         {
             if (Input.GetKey(KeyCode.RightArrow) && !face)
@@ -69,50 +83,35 @@ public class character : MonoBehaviour
             }
         }
 
-        if (SuperVel)
+        if (!itensFoiDestruido)
         {
-            if (Input.GetKey(KeyCode.Q))
+            vel = 3f;
+            if (SuperVel)
             {
-                vel = 6;
-                //SomCorrer.Play();
+                if (Input.GetKey(KeyCode.Q))
+                {                    
+                    vel = 6f;
+                    //SomCorrer.Play();
+                }
+                else
+                {
+                    vel = 3f;
+                    //omCorrer.Stop();
+                }
             }
-            else
-            {
-                vel = 3;
-                //SomCorrer.Stop();
+        }
+        else
+        {
+            vel = 0f;
+            if (clone == null)
+            {               
+                itensFoiDestruido = false;
             }
         }
 
-
-
         if (vivo == true)
         {
-            //    if (p == 1)
-            //    {
-            //        anim.SetBool("paradoCima", true);
-            //        anim.SetBool("HParado", false);
-            //        anim.SetBool("MoveEsquerda", false);
-            //        anim.SetBool("MoveCima", false);
-            //        anim.SetBool("MoveBaixo", false);
-            //    }
-            //    else if (p == 2)
-            //    {
-            //        anim.SetBool("HParado", true);
-            //        anim.SetBool("paradoCima", false);
-            //        anim.SetBool("MoveEsquerda", false);
-            //        anim.SetBool("MoveCima", false);
-            //        anim.SetBool("MoveBaixo", false);
-            //    }
-            //    else if (p == 3 || p == 4)
-            //    {
-            //        anim.SetBool("HParado", false);
-            //        anim.SetBool("paradoCima", false);
-            //        anim.SetBool("MoveEsquerda", false);
-            //        anim.SetBool("ladoParado", true);
-            //        anim.SetBool("MoveCima", false);
-            //        anim.SetBool("MoveBaixo", false);
-            //    }
-
+            
             if (cabeca == true)
             {
                 if (Input.GetKey(KeyCode.LeftArrow) && cabeca == true)
@@ -124,31 +123,25 @@ public class character : MonoBehaviour
                     //anim.SetBool("MoveCima", false);
                     //anim.SetBool("MoveBaixo", false);
                     transform.Translate(new Vector2(-vel * Time.deltaTime, 0));
-
-
-                }
-                else if (Input.GetKey(KeyCode.RightArrow) && cabeca == true)
+                }else if (Input.GetKey(KeyCode.RightArrow) && cabeca == true)
                 {
                     anim.SetBool("rodaAnda", true);
                     anim.SetBool("rodaParada", false);
                     anim.SetBool("rodaPula", false);
                     transform.Translate(new Vector2(vel * Time.deltaTime, 0));
 
-                }
-                else if (Input.GetKey(KeyCode.UpArrow) && cabeca == true)
+                }else if (Input.GetKey(KeyCode.UpArrow) && cabeca == true)
                 {
                     VerifyPlayerJump();
                     anim.SetBool("rodaAnda", false);
                     anim.SetBool("rodaParada", false);
                     anim.SetBool("rodaPula", true);
 
-                }
-                else if (cabeca == true)
+                }else if (cabeca == true)
                 {
                     anim.SetBool("rodaAnda", false);
                     anim.SetBool("rodaParada", true);
                     anim.SetBool("rodaPula", false);
-
                 }
 
             }
@@ -161,7 +154,7 @@ public class character : MonoBehaviour
 
                 if (Input.GetKey(KeyCode.LeftArrow))
                 {
-                    Debug.Log("oioi");
+                    
                     anim.SetBool("rodaAnda", false);
                     anim.SetBool("rodaParada", false);
                     anim.SetBool("rodaPula", false);
@@ -172,7 +165,6 @@ public class character : MonoBehaviour
                     //anim.SetBool("MoveCima", false);
                     //anim.SetBool("MoveBaixo", false);
                     transform.Translate(new Vector2(-vel * Time.deltaTime, 0));
-
 
                 }
                 else if (Input.GetKey(KeyCode.RightArrow) && perna == true)
@@ -188,9 +180,10 @@ public class character : MonoBehaviour
                     transform.Translate(new Vector2(vel * Time.deltaTime, 0));
 
                 }
-                else if (Input.GetKey(KeyCode.UpArrow) && perna == true)
+                else if (isGrounded == true && Input.GetKey(KeyCode.UpArrow) && perna == true)
                 {
-                    VerifyPlayerJump();
+                    isJumping = true;
+                    VerifyPlayerJump();                    
                     anim.SetBool("rodaAnda", false);
                     anim.SetBool("rodaParada", false);
                     anim.SetBool("rodaPula", false);
@@ -202,6 +195,14 @@ public class character : MonoBehaviour
                 }
                 else if (perna == true)
                 {
+
+                    
+                    //if (Input.GetKeyUp(KeyCode.UpArrow) && pulos < 2)
+                    //{
+                    //    clonechao = Instantiate(chaoDePulo, new Vector2(transform.position.x, transform.position.y - 0.1f), transform.rotation);
+                    //    Destroy(clonechao, 0.3f);                        
+                    //}
+
                     anim.SetBool("rodaAnda", false);
                     anim.SetBool("rodaParada", false);
                     anim.SetBool("rodaPula", false);
@@ -211,19 +212,12 @@ public class character : MonoBehaviour
                     anim.SetBool("pernaPulo", false);
 
                 }
-
+                                
                 this.transform.localRotation = Quaternion.Euler(0, 0, 0);
-
             }
         }
 
-
         //========================================================================
-
-
-
-
-
 
         //    if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.LeftArrow))
         //    {
@@ -237,20 +231,43 @@ public class character : MonoBehaviour
 
     }
 
-    private void VerifyPlayerJump()
-    {
-
-        if (Input.GetKey(KeyCode.UpArrow) && grounded == true && JumpCount == 0)
+        private void VerifyPlayerJump()
         {
-            Debug.Log("pulo");
-            rigid.AddForce(new Vector2(0, jumpForce));
-            candoublejump = true;
+            if (ColidindoComChao)
+            {
+                rigid.velocity = Vector2.up * jumpForce;            
+                
+                if (Input.GetKey(KeyCode.UpArrow) && isJumping == true)
+                {
+                    if (jumpTimeCounter > 0)
+                    {
+                        ColidindoComChao = false;
+                        rigid.velocity = Vector2.up * jumpForce;
+                        jumpTimeCounter -= Time.deltaTime;
+                }
+                else{
+                    isJumping = false;
+                }
+
+                }
+
+            if (Input.GetKeyUp(KeyCode.UpArrow))
+            {
+                isJumping = false;
+            }
+
+                ColidindoComChao = false;
+                 
+            }           
         }
-    }
 
         void OnCollisionEnter2D(Collision2D collide)
         {
-
+            if (collide.gameObject.CompareTag("chao"))
+            {                
+                ColidindoComChao = true;
+                            
+            }
         }
 
         void flip()
@@ -264,48 +281,41 @@ public class character : MonoBehaviour
 
         void OnCollisionExit2D(Collision2D other)
         {
-            //if (other.gameObject.CompareTag("OBJ"))
+            //if (other.gameObject.CompareTag("item"))
             //{
-            //    vel = 3f;
+                
             //}
         }
 
-        void OnTriggerEnter2D(Collider2D other)
+    
+
+    void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("item"))
-            {
-                GameObject clone;
+            {                
                 clone = Instantiate(nuvem, transform.position, transform.rotation);
                 perna = true;
                 cabeca = false;
                 Destroy(itemPerna);
                 Destroy(clone, 3f);
+                itensFoiDestruido = true;
+                vel = 0f;
+                SuperVel = true;
+                
+            }     
 
-            }
-            if (other.gameObject.CompareTag("OBJ"))
+            if (other.gameObject.CompareTag("pedra"))
             {
-                JumpCount = 0;
-                grounded = false;
-
+                pedra.AddForce(Vector2.right * 200);
             }
 
-        if (other.gameObject.CompareTag("OBJ"))
-        {
-            JumpCount = 0;
-            grounded = false;
-        }
-
-        if (other.gameObject.CompareTag("pedra"))
-        {
-            pedra.AddForce(Vector2.right * 200);
-        }
-
-        if (img.fillAmount == 0)
-        {
-            vivo = false;
-        }
-
+            if (img.fillAmount == 0)
+            {
+                vivo = false;
+            }
     }
+
+    
 
 }
 

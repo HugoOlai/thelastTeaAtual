@@ -34,7 +34,7 @@ public class Item : dropItem
         }
         else
         {
-            Debug.Log(e);
+            //Debug.Log(e);
         }
 
     }
